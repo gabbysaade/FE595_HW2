@@ -1,0 +1,45 @@
+# Homework 2
+
+# Part 3. Using any sentiment analyzer, determine the 10 best and the 10 worst companies based on their purpose.
+
+import pandas as pd
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import numpy as np
+
+
+# Load the dataset & perform analysis
+def sent_analysis(file='fake_companies.csv'):
+    sentiment = []
+    df = pd.read_csv(file)
+    sia = SentimentIntensityAnalyzer()
+
+    for i in df['Purpose']:
+        text = str(i)
+        sent = sia.polarity_scores(text)
+        sentiment.append(sent)
+
+    sent_clean = str(sentiment)
+    sent_clean = sent_clean.replace("{'neg': ", '')
+    sent_clean = sent_clean.replace(" 'neu': ", '')
+    sent_clean = sent_clean.replace(" 'pos': ", '')
+    sent_clean = sent_clean.replace(" 'compound': ", '')
+    sent_clean = sent_clean.split("}, ")
+    sent_clean[0] = sent_clean[0].replace('[', '')
+    sent_clean[-1] = sent_clean[-1].replace('}]', '')
+    df['Sentiment'] = sent_clean
+
+    comp = []
+    for i, row in enumerate(df['Sentiment']):
+        comp.append(str(df['Sentiment'][i]).split(',')[-1])
+    comp = np.array(comp)
+    comp = comp.astype(float)
+    df['Compound_Sentiment'] = comp
+
+    df = df.sort_values(['Compound_Sentiment'], ascending=True, ignore_index=True)
+
+    print('The ten worst companies are:\n', df['Name'].head(10))
+    print('The ten best companies are:\n', df['Name'].tail(10))
+
+
+if __name__ == "__main__":
+    sent_analysis()
