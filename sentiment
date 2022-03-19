@@ -8,7 +8,7 @@ import numpy as np
 
 
 # Load the dataset & perform analysis
-def sent_analysis(file='fake_companies.csv'):
+def sent_analysis(file='total_fake_companies.csv'):
     sentiment = []
     df = pd.read_csv(file)
     sia = SentimentIntensityAnalyzer()
@@ -37,8 +37,8 @@ def sent_analysis(file='fake_companies.csv'):
 
     df = df.sort_values(['Compound_Sentiment'], ascending=True, ignore_index=True)
 
-    print('The ten worst companies are:\n', df['Name'].head(10))
-    print('The ten best companies are:\n', df['Name'].tail(10))
+    print('The ten worst companies are:\n', df[['Name', 'Compound_Sentiment']].head(10))
+    print('The ten best companies are:\n', df[['Name', 'Compound_Sentiment']].tail(10))
 
 
 if __name__ == "__main__":
